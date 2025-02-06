@@ -4,9 +4,12 @@ import pandas as pd
 df = pd.read_csv("data/IMDb movies.csv")
 
 # Replace NaN values to empty strings
-df["budget"] = df["budget"].fillna("").astype(str)
-df["worlwide_gross_income"] = df["worlwide_gross_income"].fillna("").astype(str)
-df["usa_gross_income"] = df["usa_gross_income"].fillna("").astype(str)
+df["budget"] = df["budget"].fillna("")
+df["worlwide_gross_income"] = df["worlwide_gross_income"].fillna("")
+df["usa_gross_income"] = df["usa_gross_income"].fillna("")
+
+# Print output of budget to check if NaN input of column is changed to empty string
+print(df[["budget"]].head(10))
 
 # Show first 5 rows of the dataframe (info from dataset)
 print("<------------------------>")
