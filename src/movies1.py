@@ -41,7 +41,15 @@ dollars = df1[df1["budget"].str.contains("$", regex=False)]
 dollars["budget"] = dollars["budget"].str.replace("$", "", regex=False)
 
 # Change budget columns type to float
-dollars["budget"] = dollars["budget"].astype(float)
+dollars["budget"] = dollars["budget"].astype('float')
+# or
+# dollars["budget"] = pd.to_numeric(dollars["budget"]) // Changes to int instead of float
+
+# Checking if budget is changed to float
+assert dollars["budget"].dtype == float
+
+# Checking types of each column
+print(dollars.dtypes)
 
 # Get total budget per year
 get_budget_per_year = dollars.groupby("year").agg(
