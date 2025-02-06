@@ -5,7 +5,7 @@ df = pd.read_csv("data/IMDb movies.csv")
 
 # Replace NaN values to empty strings
 df["budget"] = df["budget"].fillna("").astype(str)
-df["budworlwide_gross_incomeget"] = df["worlwide_gross_income"].fillna("").astype(str)
+df["worlwide_gross_income"] = df["worlwide_gross_income"].fillna("").astype(str)
 df["usa_gross_income"] = df["usa_gross_income"].fillna("").astype(str)
 
 # Show first 5 rows of the dataframe (info from dataset)
@@ -29,8 +29,6 @@ print("<------------------------>")
 print("With describe(): ",df.describe())
 print("<------------------------>")
 
-
-
 # Making sure to make a copy of dataframe
 df1 = df
 
@@ -42,8 +40,6 @@ dollars["budget"] = dollars["budget"].str.replace("$", "", regex=False)
 
 # Change budget columns type to float
 dollars["budget"] = dollars["budget"].astype('float')
-# or
-# dollars["budget"] = pd.to_numeric(dollars["budget"]) // Changes to int instead of float
 
 # Checking if budget is changed to float
 assert dollars["budget"].dtype == float
@@ -59,11 +55,22 @@ get_budget_per_year = dollars.groupby("year").agg(
 # Show first 5 rows
 print(get_budget_per_year.head(20))
 
+# Making copy of dataframe to change the types of some finacial columns
+df2 = df
 
-# making sure if i need it in de future 
-# print("genre", df1["genre"])
+# Creating list of columns
+columns = ["budget", "usa_gross_income", "worlwide_gross_income"]
 
-# pd.factorize()
+# Loop thru each column in the list 
+for col in columns:
+    # Remove everything that is not a number 
+    df[col] = df[col].str.replace(r"[^\d.]", "", regex=True)
+
+    # Convert to a numeric type (int or float) output is float
+    df[col] = pd.to_numeric(df[col])
+
+# Printing types of all columns 
+print(df.dtypes)
 
 # Graphic with pyplot
 import matplotlib.pyplot as plt
