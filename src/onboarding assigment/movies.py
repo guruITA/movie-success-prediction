@@ -67,25 +67,82 @@ columns = ["budget", "usa_gross_income", "worlwide_gross_income"]
 # Loop thru each column in the list 
 for col in columns:
     # Remove everything that is not a number 
-    df[col] = df[col].str.replace(r"[^\d.]", "", regex=True)
+    df2[col] = df2[col].str.replace(r"[^\d.]", "", regex=True)
 
     # Convert to a numeric type (int or float) output is float
-    df[col] = pd.to_numeric(df[col])
+    df2[col] = pd.to_numeric(df[col])
 
 # Printing types of all columns 
-print(df.dtypes)
+print(df2.dtypes)
+
+# Splitting genres of each film in lists
+df2["genre"] = df2["genre"].str.split(", ")
+
+# Getting film title with their genres
+print("test\n", df2[["title", "genre"]].head(5))
+
+genre_dummies = df2["genre"].explode().str.get_dummies().groupby(level=0).sum()
+
+test = pd.concat([df2["title"], genre_dummies], axis=1)
+
+print("hot encoding\n", test.head(5))
+
+print("test0\n", df2["genre"].head(10))
+
+# Split each genre to seperate rows and then count then amount of times each genre appears in dataset
+genre_counts = df2["genre"].explode().value_counts()
+print("Value counts\n", genre_counts)
+
+# Making a array list with all unique genres
+unique_genres = df2["genre"].explode().unique()
+
+# Convert categorical data to numerical data
+code = pd.factorize(unique_genres)[0]
+
+# Getting unique genre and numerical data in seperate lists
+print("test1\n", [unique_genres, str(code)])    
+
+# Creating an empty list to store genres with their numeric code
+genre_code_list = []
+
+# The zip() function takes two lists (here 'unique_genres' and 'code') and creates pairs of elements.
+# It combines the first element of the first list with the first element of the second list,
+# the second element of the first list with the second element of the second list, and so on.
+# For example, zip(["Drama", "Comedy"], [1, 2]) would create the pairs ("Drama", 1) and ("Comedy", 2).
+
+# Loop through each paired value (genre, code) created by zip() 
+for genre, code in zip(unique_genres, code):
+
+    # Adding data to genre_code_list in a list each time it iterates
+    genre_code_list.append([genre, str(code)])
+
+    # Print genre and code each iteration
+    print(f"genre: {genre}: {code}")
+
+# Print the filled list with genre and code 
+print(genre_code_list)
 
 # Graphic with pyplot
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
+# Title of the graphic 
 plt.title("Budget per year")
-plt.bar(get_budget_per_year["year"], get_budget_per_year["budget_per_year"], color="red", label="Budget per year")
+
+# Addig x-axis value and y-axis value, color of bar that shows result is red and adding label so that it can be shown in legend later
+plt.bar(get_budget_per_year["year"], get_budget_per_year["budget_per_year"], color="red", label="Budget per year ($)")   
+
 plt.xlabel("Year")
 plt.ylabel("Budget in $")
-plt.yscale("log")
-formatter = ticker.FuncFormatter(lambda x, _: f'{x:,.0f}')  
+
+# The lambda function takes a number 'x' and formats it to include commas as thousands separators and no decimal places.
+formatter = ticker.FuncFormatter(lambda x, _: f'{x:,.0f}') 
+
+# Apply the custom formatter to the y-axis of the current plot
 plt.gca().yaxis.set_major_formatter(formatter)  
 
+# To show legend
 plt.legend()
+
+# To show grafich
 plt.show()
