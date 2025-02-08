@@ -35,6 +35,9 @@ print("<------------------------>")
 # Making sure to make a copy of dataframe
 df1 = df
 
+# removes NaN value from budget column 
+# df1 = df1.dropna(subset=["budget"])
+
 # Get only budget fields that contain $ and saving in another dataframe
 dollars = df1[df1["budget"].str.contains("$", regex=False)]
 
