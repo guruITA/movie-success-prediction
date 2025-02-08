@@ -62,15 +62,24 @@ print(get_budget_per_year.head(20))
 df2 = df
 
 # Creating list of columns
-columns = ["budget", "usa_gross_income", "worlwide_gross_income"]
+finacial = ["budget", "usa_gross_income", "worlwide_gross_income"]
 
 # Loop thru each column in the list 
-for col in columns:
+for col in finacial:
     # Remove everything that is not a number 
     df2[col] = df2[col].str.replace(r"[^\d.]", "", regex=True)
 
     # Convert to a numeric type (int or float) output is float
     df2[col] = pd.to_numeric(df[col])
+
+# Creating list of columns
+categorical = ["country", "language", "director", "writer", "production_company"]
+
+# Loop thru each column in the list 
+for col in categorical:
+
+    # Convert categorical data to numerical data
+    df1[col] = pd.factorize(df1[col])[0]
 
 # Printing types of all columns 
 print(df2.dtypes)
