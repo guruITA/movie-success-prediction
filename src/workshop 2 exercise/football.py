@@ -1,6 +1,6 @@
 import pandas as pd
 
-# Get data from de csv file 
+# Read the dataset (csv file) into dataframe
 df = pd.read_csv("data/football_results.csv")
 
 # Printing the first rows of de dataframe (Data from csv)
