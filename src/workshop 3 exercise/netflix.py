@@ -3,7 +3,7 @@ import pandas as pd
 # Read the dataset (csv file) into dataframe
 df = pd.read_csv("data/netflix_data.csv")
 
-# Show info about the dataset (column names, data type, amount of rows or columns, etc. )
+# Show info about the dataframe (column names, data type, amount of rows or columns, etc. )
 df.info()
 
 # Remove all rows where duration column is NaN 
@@ -36,5 +36,5 @@ print(df_action["short_movies"].sum())
 # Replacing the type column type using hot encoding
 df[['type_movie', 'type_tvshow']] = df["type"].str.get_dummies()
 
-# Printing dataset
+# Printing dataframe
 print(df.head(5))
