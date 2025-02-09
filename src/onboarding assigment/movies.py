@@ -61,19 +61,16 @@ get_budget_per_year = dollars.groupby("year").agg(
 # Show first 5 rows
 print(get_budget_per_year.head(20))
 
-# Making copy of dataframe to change the types of some finacial columns
-df2 = df
-
 # Creating list of columns
 finacial = ["budget", "usa_gross_income", "worlwide_gross_income"]
 
 # Loop thru each column in the list 
 for col in finacial:
     # Remove everything that is not a number 
-    df2[col] = df2[col].str.replace(r"[^\d.]", "", regex=True)
+    df1[col] = df1[col].str.replace(r"[^\d.]", "", regex=True)
 
     # Convert to a numeric type (int or float) output is float
-    df2[col] = pd.to_numeric(df[col])
+    df1[col] = pd.to_numeric(df1[col])
 
 # Creating list of columns
 categorical = ["country", "language", "director", "writer", "production_company"]
@@ -85,28 +82,28 @@ for col in categorical:
     df1[col] = pd.factorize(df1[col])[0]
 
 # Printing types of all columns 
-print(df2.dtypes)
+print(df1.dtypes)
 
 # Splitting genres of each film in lists
-df2["genre"] = df2["genre"].str.split(", ")
+df1["genre"] = df1["genre"].str.split(", ")
 
 # Getting film title with their genres
-print("test\n", df2[["title", "genre"]].head(5))
+print("test\n", df1[["title", "genre"]].head(5))
 
-genre_dummies = df2["genre"].explode().str.get_dummies().groupby(level=0).sum()
+genre_dummies = df1["genre"].explode().str.get_dummies().groupby(level=0).sum()
 
-test = pd.concat([df2["title"], genre_dummies], axis=1)
+test = pd.concat([df1["title"], genre_dummies], axis=1)
 
 print("hot encoding\n", test.head(5))
 
-print("test0\n", df2["genre"].head(10))
+print("test0\n", df1["genre"].head(10))
 
 # Split each genre to seperate rows and then count then amount of times each genre appears in dataset
-genre_counts = df2["genre"].explode().value_counts()
+genre_counts = df1["genre"].explode().value_counts()
 print("Value counts\n", genre_counts)
 
 # Making a array list with all unique genres
-unique_genres = df2["genre"].explode().unique()
+unique_genres = df1["genre"].explode().unique()
 
 # Convert categorical data to numerical data
 code = pd.factorize(unique_genres)[0]
