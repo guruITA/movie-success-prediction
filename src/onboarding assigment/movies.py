@@ -64,14 +64,15 @@ for col in finacial:
     # Convert to a numeric type (int or float) output is float
     df[col] = pd.to_numeric(df[col])
 
-# Creating list of columns
-categorical = ["actors", "country", "language", "director", "writer", "production_company"]
+categorical_col = ['genre', 'country', 'language', 'director', 'writer', 'production_company']
 
-# Loop thru each column in the list 
-for col in categorical:
-
-    # Convert categorical data to numerical data
-    df[col] = pd.factorize(df[col])[0]
+# Store original labels in separate columns (optional)
+for col in categorical_col:
+    # Factorize the column
+    encoded_values = pd.factorize(df[col].fillna("Unknown"))[0]
+    
+    # Create a new column to store the encoded labels for use in the model
+    df[f"{col}_encoded"] = encoded_values
 
 # Printing types of all columns 
 print(df.dtypes)
