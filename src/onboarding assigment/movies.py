@@ -3,14 +3,6 @@ import pandas as pd
 # Read the dataset (csv file) into dataframe
 df = pd.read_csv("data/IMDb movies.csv")
 
-# Replace NaN values to empty strings
-# df["budget"] = df["budget"].fillna("")
-# df["worlwide_gross_income"] = df["worlwide_gross_income"].fillna("")
-# df["usa_gross_income"] = df["usa_gross_income"].fillna("")
-
-# Print output of budget to check if NaN input of column is changed to empty string
-print(df[["budget"]].head(10))
-
 # Show first 5 rows of the dataframe (info from dataset)
 print("<------------------------>")
 print("With head(): ",df.head(5))
@@ -45,7 +37,7 @@ dollars = df1[df1["budget"].str.contains("$", regex=False)].copy()
 dollars["budget"] = dollars["budget"].str.replace("$", "", regex=False)
 
 # Change budget columns type to float
-dollars["budget"] = dollars["budget"].astype('float')
+dollars["budget"] = dollars["budget"].astype(float)
 
 # Checking if budget is changed to float
 assert dollars["budget"].dtype == float
@@ -62,52 +54,52 @@ get_budget_per_year = dollars.groupby("year").agg(
 print(get_budget_per_year.head(20))
 
 # Creating list of columns
-finacial = ["budget", "usa_gross_income", "worlwide_gross_income"]
+finacial = ["usa_gross_income"]
 
 # Loop thru each column in the list 
 for col in finacial:
     # Remove everything that is not a number 
-    df1[col] = df1[col].str.replace(r"[^\d.]", "", regex=True)
+    df[col] = df[col].str.replace(r"[^\d.]", "", regex=True)
 
     # Convert to a numeric type (int or float) output is float
-    df1[col] = pd.to_numeric(df1[col])
+    df[col] = pd.to_numeric(df[col])
 
 # Creating list of columns
-categorical = ["country", "language", "director", "writer", "production_company"]
+categorical = ["actors", "country", "language", "director", "writer", "production_company"]
 
 # Loop thru each column in the list 
 for col in categorical:
 
     # Convert categorical data to numerical data
-    df1[col] = pd.factorize(df1[col])[0]
+    df[col] = pd.factorize(df[col])[0]
 
 # Printing types of all columns 
-print(df1.dtypes)
+print(df.dtypes)
 
 # Splitting genres of each film in lists
-df1["genre"] = df1["genre"].str.split(", ")
+df["genre"] = df["genre"].str.split(", ")
 
 # Getting film title with their genres
-print("test\n", df1[["title", "genre"]].head(5))
+print("test\n", df[["title", "genre"]].head(5))
 
+# 
+genre_dummies = df["genre"].explode().str.get_dummies().groupby(level=0).sum()
 
-genre_dummies = df1["genre"].explode().str.get_dummies().groupby(level=0).sum()
+# 
+df = pd.concat([df, genre_dummies], axis=1)
 
+# 
+print("Hot encoding\n", df.head(5))
 
-test = pd.concat([df1["title"], genre_dummies], axis=1)
-
-
-print("Hot encoding\n", test.head(5))
-
-
-print("First 10 rows of genre\n", df1["genre"].head(10))
+# 
+print("First 10 rows of genre\n", df["genre"].head(10))
 
 # Split each genre to seperate rows and then count then amount of times each genre appears in dataset
-genre_counts = df1["genre"].explode().value_counts()
+genre_counts = df["genre"].explode().value_counts()
 print("Value counts\n", genre_counts)
 
 # Making a array list with all unique genres
-unique_genres = df1["genre"].explode().unique()
+unique_genres = df["genre"].explode().unique()
 
 # Convert categorical data to numerical data
 code = pd.factorize(unique_genres)[0]
@@ -136,32 +128,32 @@ for genre, code in zip(unique_genres, code):
 print(genre_code_list)
 
 # Graphic with pyplot
-import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
+# import matplotlib.pyplot as plt
+# import matplotlib.ticker as ticker
 
-# Title of the graphic 
-plt.title("Budget per year")
+# # Title of the graphic 
+# plt.title("Budget per year")
 
-# Addig x-axis value and y-axis value, color of bar that shows result is red and adding label so that it can be shown in legend later
-plt.bar(get_budget_per_year["year"], get_budget_per_year["budget_per_year"], color="red", label="Budget per year ($)")   
+# # Addig x-axis value and y-axis value, color of bar that shows result is red and adding label so that it can be shown in legend later
+# plt.bar(get_budget_per_year["year"], get_budget_per_year["budget_per_year"], color="red", label="Budget per year ($)")   
 
-plt.xlabel("Year")
-plt.ylabel("Budget in $")
+# plt.xlabel("Year")
+# plt.ylabel("Budget in $")
 
-# The lambda function takes a number 'x' and formats it to include commas as thousands separators and no decimal places.
-formatter = ticker.FuncFormatter(lambda x, _: f'{x:,.0f}') 
+# # The lambda function takes a number 'x' and formats it to include commas as thousands separators and no decimal places.
+# formatter = ticker.FuncFormatter(lambda x, _: f'{x:,.0f}') 
 
-# Apply the custom formatter to the y-axis of the current plot
-plt.gca().yaxis.set_major_formatter(formatter)  
+# # Apply the custom formatter to the y-axis of the current plot
+# plt.gca().yaxis.set_major_formatter(formatter)  
 
-# To show legend
-plt.legend()
+# # To show legend
+# plt.legend()
 
-# To show grafich
-plt.show()
+# # To show grafich
+# plt.show()
 
-# Getting Info of the dataframe 
-df.info()
+# # Getting Info of the dataframe 
+# df.info()
 
 # Only gets the numbers from the budget en put in new column value
 df["value"] = df["budget"].str.extract(r'(\d+)')
@@ -178,7 +170,7 @@ df["worlwide_gross_income"] = pd.to_numeric(df["worlwide_gross_income"])
 df = df.sort_values("year", ascending=True)
 
 # Making a new dataframe with the columns I need
-new_df = df[["title", "year", "budget", "currency", "worlwide_gross_income", "value"]].copy()
+new_df = df.copy()
 
 # Getting unique currencies so not the same currencies the same time
 currecies = new_df["currency"].unique()
@@ -268,18 +260,18 @@ def convert_to_usd(value, currency):
         case "AED": return value * 0.27     # United Arab Emirates Dirham
         case _: return value                # Unknown currency, keep value unchanged
 
+# Convert values of different currencies to USD
+new_df["budget_usd"] = new_df.apply(lambda row: convert_to_usd(row["value"], row["currency"]), axis=1)
+
 # Creating converted_currency column from converted_currency
 new_df["converted_currency"] = new_df["currency"]
 
 # Put USD as value in all column
 new_df["converted_currency"] = "USD"
 
-# Convert values of different currencies to USD
-new_df["value_usd"] = new_df.apply(lambda row: convert_to_usd(row["value"], row["currency"]), axis=1)
-
 # If column value is NaN it will be changed to 0
 new_df["value"] = new_df["value"].fillna(0)
-new_df["value_usd"] = new_df["value_usd"].fillna(0)
+new_df["budget_usd"] = new_df["budget_usd"].fillna(0)
 new_df["budget"] = new_df["budget"].fillna(0)
 new_df["worlwide_gross_income"] = new_df["worlwide_gross_income"].fillna(0)
 
@@ -287,10 +279,12 @@ new_df["worlwide_gross_income"] = new_df["worlwide_gross_income"].fillna(0)
 new_df["currency"] = new_df["currency"].fillna("Unknown")
 
 # If worlwide_gross_income is greater then value_usd output will be 1 if not it will be 0
-new_df["successful"] = new_df.apply(lambda row: 1 if row["worlwide_gross_income"] > row["value_usd"] else 0, axis = 1)
+new_df["successful"] = new_df.apply(lambda row: 1 if row["worlwide_gross_income"] > row["budget_usd"] else 0, axis = 1)
 
 # Printing the first 20 rows 
 print(new_df.head(20))
 
 # Converting dataframe info to csv file
-new_df.to_csv("data/movies_successfull.csv")
+new_df.to_csv("data/clean_movies_successfull.csv")
+
+new_df.info()
