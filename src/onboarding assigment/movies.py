@@ -83,16 +83,20 @@ df["genre"] = df["genre"].str.split(", ")
 # Getting film title with their genres
 print("test\n", df[["title", "genre"]].head(5))
 
-# 
+# First, the 'genre' column is exploded, meaning that lists of genres are split into separate rows, 
+# each containing a single genre while retaining the original index. 
+# Then, these genres are converted into binary columns (one-hot encoding).
+# Finally, the rows are grouped back by the original movie index, summing up the binary values 
+# to ensure each movie has a single row with its corresponding genres encoded.
 genre_dummies = df["genre"].explode().str.get_dummies().groupby(level=0).sum()
 
-# 
+# Adding the data to the original dataframe 
 df = pd.concat([df, genre_dummies], axis=1)
 
-# 
+# Printing the first 5 rows with the one hot encodeing
 print("Hot encoding\n", df.head(5))
 
-# 
+# Printing the first 10 rows of genre
 print("First 10 rows of genre\n", df["genre"].head(10))
 
 # Split each genre to seperate rows and then count then amount of times each genre appears in dataset
@@ -129,32 +133,32 @@ for genre, code in zip(unique_genres, code):
 print(genre_code_list)
 
 # Graphic with pyplot
-# import matplotlib.pyplot as plt
-# import matplotlib.ticker as ticker
+import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 
-# # Title of the graphic 
-# plt.title("Budget per year")
+# Title of the graphic 
+plt.title("Budget per year")
 
-# # Addig x-axis value and y-axis value, color of bar that shows result is red and adding label so that it can be shown in legend later
-# plt.bar(get_budget_per_year["year"], get_budget_per_year["budget_per_year"], color="red", label="Budget per year ($)")   
+# Addig x-axis value and y-axis value, color of bar that shows result is red and adding label so that it can be shown in legend later
+plt.bar(get_budget_per_year["year"], get_budget_per_year["budget_per_year"], color="red", label="Budget per year ($)")   
 
-# plt.xlabel("Year")
-# plt.ylabel("Budget in $")
+plt.xlabel("Year")
+plt.ylabel("Budget in $")
 
-# # The lambda function takes a number 'x' and formats it to include commas as thousands separators and no decimal places.
-# formatter = ticker.FuncFormatter(lambda x, _: f'{x:,.0f}') 
+# The lambda function takes a number 'x' and formats it to include commas as thousands separators and no decimal places.
+formatter = ticker.FuncFormatter(lambda x, _: f'{x:,.0f}') 
 
-# # Apply the custom formatter to the y-axis of the current plot
-# plt.gca().yaxis.set_major_formatter(formatter)  
+# Apply the custom formatter to the y-axis of the current plot
+plt.gca().yaxis.set_major_formatter(formatter)  
 
-# # To show legend
-# plt.legend()
+# To show legend
+plt.legend()
 
-# # To show grafich
-# plt.show()
+# To show grafich
+plt.show()
 
-# # Getting Info of the dataframe 
-# df.info()
+# Getting Info of the dataframe 
+df.info()
 
 # Only gets the numbers from the budget en put in new column value
 df["value"] = df["budget"].str.extract(r'(\d+)')
