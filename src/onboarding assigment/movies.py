@@ -275,6 +275,7 @@ new_df["value"] = new_df["value"].fillna(0)
 new_df["budget_usd"] = new_df["budget_usd"].fillna(0)
 new_df["budget"] = new_df["budget"].fillna(0)
 new_df["worlwide_gross_income"] = new_df["worlwide_gross_income"].fillna(0)
+new_df["country"] = new_df["country"].fillna("Unknown")
 
 # If column value is NaN it will be changed to Unknown
 new_df["currency"] = new_df["currency"].fillna("Unknown")
