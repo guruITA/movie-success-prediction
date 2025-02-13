@@ -77,7 +77,7 @@ for col in categorical_col:
 # Printing types of all columns 
 print(df.dtypes)
 
-# Splitting genres of each film in lists
+# Splitting genres of each movie in lists
 df["genre"] = df["genre"].str.split(", ")
 
 # Getting film title with their genres
