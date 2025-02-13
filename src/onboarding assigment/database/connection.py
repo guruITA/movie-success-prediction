@@ -3,7 +3,6 @@ import pandas as pd
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
-# import logging
 
 load_dotenv()
 
@@ -14,9 +13,10 @@ host = os.getenv("DB_HOST")
 port = os.getenv("DB_PORT")
 database = os.getenv("DB_NAME")
 
-# Format the connection URL for MySQL using pymysql
+# Format the connection URL for MySQL
 connection_url = f"mysql+mysqlconnector://{user}:{password}@{host}:{port}/{database}"
 
+# Create SQLAlchemy engine
 engine = create_engine(connection_url)
 
 try:
@@ -42,10 +42,44 @@ try:
 
             # Insert data in chunks for large datasets
             df.to_sql("movies", engine, if_exists="replace", index=False, chunksize=500)
-            print("IMDb movies dataset stored in the database successfully!")
+            print("IMDb movies dataset stored in the database successfully")
+
+            # Function to execute SQL queries
+            def run_query(query):
+                try:
+                    with engine.connect() as conn:
+                        result = conn.execute(text(query))
+                        return result.fetchall()
+                except SQLAlchemyError as e:
+                    print(f"Error executing query: {e}")
+
+            # Loading all movies with an English language
+            query_english_movies = "SELECT * FROM movies WHERE language = '%English%'"
+            english_movies = run_query(query_english_movies)
+            print(f"Found {len(english_movies)} movies with English language")
+
+            # Get the number of movies for each country
+            query_movies_per_countries = "SELECT title, country FROM movies"
+            movies_per_countries = run_query(query_movies_per_countries)
+
+            df_movies = pd.DataFrame(movies_per_countries)
+            df_movies["country"] = df_movies["country"].str.split(", ")
+            country_counts = df_movies["country"].explode().value_counts()
+            pd.set_option("display.max_rows", None)
+            print("Amount of movies in each country\n", country_counts)
+
+            # Query 3: Get the average movie budget for each year
+            query_avg_budget_per_year = """
+                SELECT year, AVG(budget_usd) AS avg_budget
+                FROM movies
+                GROUP BY year
+                ORDER BY year ASC;
+            """
+            avg_budget_per_year = run_query(query_avg_budget_per_year)
+            print("Average budget per year in dollars:\n", avg_budget_per_year)
 
     except SQLAlchemyError as e:
         print(f"Error during data insertion: {e}")
 
 except Exception as e:
-    print("Error connecting to the database:", e)
+    print(f"Error connecting to the database: {e}")
