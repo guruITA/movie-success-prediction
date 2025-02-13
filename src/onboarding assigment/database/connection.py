@@ -53,30 +53,40 @@ try:
                 except SQLAlchemyError as e:
                     print(f"Error executing query: {e}")
 
-            # Loading all movies with an English language
-            query_english_movies = "SELECT * FROM movies WHERE language = '%English%'"
-            english_movies = run_query(query_english_movies)
-            print(f"Found {len(english_movies)} movies with English language")
+            # Get all movies with an English language
+            try:
+                query_english_movies = "SELECT * FROM movies WHERE language = '%English%'"
+                english_movies = run_query(query_english_movies)
+                print(f"Found {len(english_movies)} movies with English language")
+            except SQLAlchemyError as e:
+                print(f"Error fetching movies with english language: {e}")
 
             # Get the number of movies for each country
-            query_movies_per_countries = "SELECT title, country FROM movies"
-            movies_per_countries = run_query(query_movies_per_countries)
+            try:
+                query_movies_per_countries = "SELECT title, country FROM movies"
+                movies_per_countries = run_query(query_movies_per_countries)
 
-            df_movies = pd.DataFrame(movies_per_countries)
-            df_movies["country"] = df_movies["country"].str.split(", ")
-            country_counts = df_movies["country"].explode().value_counts()
-            pd.set_option("display.max_rows", None)
-            print("Amount of movies in each country\n", country_counts)
-
-            # Query 3: Get the average movie budget for each year
-            query_avg_budget_per_year = """
-                SELECT year, AVG(budget_usd) AS avg_budget
-                FROM movies
-                GROUP BY year
-                ORDER BY year ASC;
-            """
-            avg_budget_per_year = run_query(query_avg_budget_per_year)
-            print("Average budget per year in dollars:\n", avg_budget_per_year)
+                df_movies = pd.DataFrame(movies_per_countries)
+                df_movies["country"] = df_movies["country"].str.split(", ")
+                country_counts = df_movies["country"].explode().value_counts()
+                pd.set_option("display.max_rows", None)
+                print("Amount of movies in each country\n", country_counts)
+            except SQLAlchemyError as e:
+                print(f"Error fetching movies: {e}")
+            
+            # Get the average movie budget for each year
+            try:
+                query_avg_budget_per_year = """
+                    SELECT year, AVG(budget_usd) AS avg_budget
+                    FROM movies
+                    GROUP BY year
+                    ORDER BY year ASC;
+                """
+                avg_budget_per_year = run_query(query_avg_budget_per_year)
+                print("Average budget per year in dollars:\n", avg_budget_per_year)
+                
+            except SQLAlchemyError as e:
+                print(f"Error fetching average budget per year: {e}")
 
     except SQLAlchemyError as e:
         print(f"Error during data insertion: {e}")
