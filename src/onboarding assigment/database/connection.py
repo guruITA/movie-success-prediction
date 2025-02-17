@@ -67,7 +67,7 @@ try:
 
             try:
                 # Get all movies with an English language
-                query_english_movies = "SELECT * FROM movies WHERE language = '%English%'"
+                query_english_movies = "SELECT * FROM movies WHERE language LIKE '%English%'"
 
                 # Executing the query using the run_query function 
                 english_movies = run_query(query_english_movies)
