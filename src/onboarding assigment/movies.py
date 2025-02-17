@@ -64,7 +64,7 @@ for col in finacial:
     # Convert to a numeric type (int or float) output is float
     df[col] = pd.to_numeric(df[col])
 
-categorical_col = ['genre', 'country', 'language', 'director', 'writer', 'production_company']
+categorical_col = ['actors', 'genre', 'country', 'language', 'director', 'writer', 'production_company']
 
 # Store original labels in separate columns (optional)
 for col in categorical_col:
