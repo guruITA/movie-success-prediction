@@ -280,6 +280,16 @@ new_df["budget_usd"] = new_df["budget_usd"].fillna(0)
 new_df["budget"] = new_df["budget"].fillna(0)
 new_df["worlwide_gross_income"] = new_df["worlwide_gross_income"].fillna(0)
 new_df["country"] = new_df["country"].fillna("Unknown")
+new_df["language"] = new_df["language"].fillna("Unknown")
+new_df["director"] = new_df["director"].fillna("Unknown")
+new_df["writer"] = new_df["writer"].fillna("Unknown")
+new_df["production_company"] = new_df["production_company"].fillna("Unknown")
+new_df["actors"] = new_df["actors"].fillna("Unknown")
+new_df["description"] = new_df["description"].fillna("Unknown")
+new_df["usa_gross_income"] = new_df["usa_gross_income"].fillna(0)
+new_df["metascore"] = new_df["metascore"].fillna(0)
+new_df["reviews_from_users"] = new_df["reviews_from_users"].fillna(0)
+new_df["reviews_from_critics"] = new_df["reviews_from_critics"].fillna(0)
 
 # If column value is NaN it will be changed to Unknown
 new_df["currency"] = new_df["currency"].fillna("Unknown")
@@ -289,6 +299,9 @@ new_df["successful"] = new_df.apply(lambda row: 1 if row["worlwide_gross_income"
 
 # Printing the first 20 rows 
 print(new_df.head(20))
+
+nan_counts = new_df.isna().sum()
+print('testtttttttttt\n', nan_counts)
 
 # Converting dataframe info to csv file
 new_df.to_csv("data/clean_movies_successfull.csv")
