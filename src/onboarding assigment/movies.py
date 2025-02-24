@@ -66,29 +66,33 @@ for col in finacial:
 
 categorical_col = ['actors', 'genre', 'country', 'language', 'director', 'writer', 'production_company']
 
-# Store original labels in separate columns (optional)
+# 
 for col in categorical_col:
-    # Factorize the column
-    encoded_values = pd.factorize(df[col].fillna("Unknown"))[0]
     
-    # Create a new column to store the encoded labels for use in the model
-    df[f"{col}_encoded"] = encoded_values
+    #
+    df[f"{col}_list"] = df[col].fillna("Unknown").str.split(", ")
+    
+    #
+    unique_values = df[f"{col}_list"].explode().unique()
+
+    #
+    value_mapping = {value: idx for idx, value in enumerate(unique_values)}
+
+    #
+    df[f"{col}_encoded"] = df[f"{col}_list"].apply(lambda values: [value_mapping[value] for value in values])
 
 # Printing types of all columns 
 print(df.dtypes)
 
-# Splitting genres of each movie in lists
-df["genre"] = df["genre"].str.split(", ")
-
 # Getting film title with their genres
-print("test\n", df[["title", "genre"]].head(5))
+print("test\n", df[["title", "genre_list"]].head(5))
 
 # First, the 'genre' column is exploded, meaning that lists of genres are split into separate rows, 
 # each containing a single genre while retaining the original index. 
 # Then, these genres are converted into binary columns (one-hot encoding).
 # Finally, the rows are grouped back by the original movie index, summing up the binary values 
 # to ensure each movie has a single row with its corresponding genres encoded.
-genre_dummies = df["genre"].explode().str.get_dummies().groupby(level=0).sum()
+genre_dummies = df["genre_list"].explode().str.get_dummies().groupby(level=0).sum()
 
 # Adding the data to the original dataframe 
 df = pd.concat([df, genre_dummies], axis=1)
@@ -97,14 +101,14 @@ df = pd.concat([df, genre_dummies], axis=1)
 print("Hot encoding\n", df.head(5))
 
 # Printing the first 10 rows of genre
-print("First 10 rows of genre\n", df["genre"].head(10))
+print("First 10 rows of genre\n", df["genre_list"].head(10))
 
 # Split each genre to seperate rows and then count then amount of times each genre appears in dataset
-genre_counts = df["genre"].explode().value_counts()
+genre_counts = df["genre_list"].explode().value_counts()
 print("Value counts\n", genre_counts)
 
 # Making a array list with all unique genres
-unique_genres = df["genre"].explode().unique()
+unique_genres = df["genre_list"].explode().unique()
 
 # Convert categorical data to numerical data
 code = pd.factorize(unique_genres)[0]
@@ -301,7 +305,7 @@ new_df["successful"] = new_df.apply(lambda row: 1 if row["worlwide_gross_income"
 print(new_df.head(20))
 
 nan_counts = new_df.isna().sum()
-print('testtttttttttt\n', nan_counts)
+print("Check NaN in columns\n", nan_counts)
 
 # Converting dataframe info to csv file
 new_df.to_csv("data/clean_movies_successfull.csv")
