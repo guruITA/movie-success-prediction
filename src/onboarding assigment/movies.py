@@ -298,8 +298,8 @@ new_df["reviews_from_critics"] = new_df["reviews_from_critics"].fillna(0)
 # If column value is NaN it will be changed to Unknown
 new_df["currency"] = new_df["currency"].fillna("Unknown")
 
-# If budget_usd is greater then worlwide_gross_income output will be 1 if not it will be 0
-new_df["successful"] = new_df.apply(lambda row: 1 if row["budget_usd"] > row["worlwide_gross_income"] else 0, axis = 1)
+# If worlwide_gross_income is greater then value_usd output will be 1 if not it will be 0
+new_df["successful"] = new_df.apply(lambda row: 1 if row["worlwide_gross_income"] < row["budget_usd"] else 0, axis = 1)
 
 # Printing the first 20 rows 
 print(new_df.head(20))
