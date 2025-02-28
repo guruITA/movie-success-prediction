@@ -64,9 +64,10 @@ for col in finacial:
     # Convert to a numeric type (int or float) output is float
     df[col] = pd.to_numeric(df[col])
 
+# Creating the lsit of categorical columns 
 categorical_col = ['actors', 'genre', 'country', 'language', 'director', 'writer', 'production_company']
 
-# 
+# Factorizing the categorical data 
 for col in categorical_col:
     
     #
@@ -278,36 +279,38 @@ new_df["converted_currency"] = new_df["currency"]
 # Put USD as value in all column
 new_df["converted_currency"] = "USD"
 
+# If worlwide_gross_income is greater then budget_usd output will be 1 if not it will be 0
+new_df["successful"] = new_df.apply(lambda row: 1 if row["worlwide_gross_income"] > row["budget_usd"] else 0, axis = 1)
+
+# Creating list of numeric columns
+numeric_columns = ["budget", "worlwide_gross_income", "value", "budget_usd", "usa_gross_income", "metascore", "reviews_from_users", "reviews_from_critics"]
+
 # If column value is NaN it will be changed to 0
-new_df["value"] = new_df["value"].fillna(0)
-new_df["budget_usd"] = new_df["budget_usd"].fillna(0)
-new_df["budget"] = new_df["budget"].fillna(0)
-new_df["worlwide_gross_income"] = new_df["worlwide_gross_income"].fillna(0)
-new_df["country"] = new_df["country"].fillna("Unknown")
-new_df["language"] = new_df["language"].fillna("Unknown")
-new_df["director"] = new_df["director"].fillna("Unknown")
-new_df["writer"] = new_df["writer"].fillna("Unknown")
-new_df["production_company"] = new_df["production_company"].fillna("Unknown")
-new_df["actors"] = new_df["actors"].fillna("Unknown")
-new_df["description"] = new_df["description"].fillna("Unknown")
-new_df["usa_gross_income"] = new_df["usa_gross_income"].fillna(0)
-new_df["metascore"] = new_df["metascore"].fillna(0)
-new_df["reviews_from_users"] = new_df["reviews_from_users"].fillna(0)
-new_df["reviews_from_critics"] = new_df["reviews_from_critics"].fillna(0)
+for col in numeric_columns:
+    # Replace NaN with 0
+    new_df[col] = new_df[col].fillna(0)
 
-# If column value is NaN it will be changed to Unknown
-new_df["currency"] = new_df["currency"].fillna("Unknown")
+# Creating list of text columns
+text_columns = ["currency", "country", "language", "director", "writer", "production_company", "actors", "description"]
 
-# If worlwide_gross_income is greater then value_usd output will be 1 if not it will be 0
-new_df["successful"] = new_df.apply(lambda row: 1 if row["worlwide_gross_income"] < row["budget_usd"] else 0, axis = 1)
+# If column value is NaN it will be changed to unknown
+for col in text_columns:
+    # Replace NaN with 0
+    new_df[col] = new_df[col].fillna("Unknown")
 
 # Printing the first 20 rows 
 print(new_df.head(20))
 
+# 
 nan_counts = new_df.isna().sum()
+
+# 
+pd.set_option("display.max_rows", None)
+
+# 
 print("Check NaN in columns\n", nan_counts)
 
 # Converting dataframe info to csv file
-new_df.to_csv("data/clean_movies_successfull.csv")
+new_df.to_csv("data/clean_movies_successfull.csv", index=False)
 
 new_df.info()
