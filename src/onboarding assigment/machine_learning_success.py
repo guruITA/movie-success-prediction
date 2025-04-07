@@ -286,3 +286,15 @@ plt.tight_layout()     # Adjust layout so subplots do not overlap
 plt.show()             # Display the combined figure
 
 print("Script completed.")  # Print completion message
+
+import joblib
+
+# Na het trainen van je modellen
+joblib.dump(lr_model, 'lr_model.pkl')
+joblib.dump(rf_model, 'rf_model.pkl')
+joblib.dump(sgd_model, 'sgd_model.pkl')
+import json
+
+# Na het berekenen van de target_mapping
+with open('target_mapping.json', 'w') as f:
+    json.dump(target_mapping, f)

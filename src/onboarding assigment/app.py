@@ -1,6 +1,5 @@
 import dash
 from dash import dcc, html, Input, Output
-from dash import dash_table
 import plotly.express as px
 import pandas as pd
 
@@ -89,31 +88,13 @@ app.layout = html.Div([
         ], style={'width': '70%', 'display': 'inline-block', 'vertical-align': 'top'}),
 
     ], style={'display': 'flex', 'padding': '20px'}),
-
-    html.Div([ 
-        html.H3("Tabel met Films", style={'textAlign': 'center', 'padding': '20px'}),
-        dash_table.DataTable(
-            id='movies-table',
-            columns=[
-                {"name": "Title", "id": "title"},
-                {"name": "Year", "id": "year"},
-                {"name": "Director", "id": "director"},
-                {"name": "Actor", "id": "actors"},
-                {"name": "Budget", "id": "budget_usd"},
-                {"name": "Average Vote", "id": "avg_vote"}
-            ],
-            style_table={'height': '300px', 'overflowY': 'auto'},
-            style_cell={'textAlign': 'left', 'padding': '5px'},
-            page_size=10,  
-        )
-    ], style={'padding': '20px', 'border': '1px solid #ddd', 'border-radius': '10px', 'margin-top': '40px'})
 ])
 
 @app.callback(
     [Output('genre-chart', 'figure'),
      Output('language-chart', 'figure'),
      Output('avg-budget-year-chart', 'figure'),
-     Output('movies-table', 'data')],
+    ],
     [Input('title-filter', 'value'),  
      Input('genre-filter', 'value'),
      Input('year-picker', 'start_date'),
@@ -198,9 +179,8 @@ def update_graphs(selected_titles, selected_genres, start_date, end_date, select
     avg_budget_per_year = filtered_df.groupby('year')['budget_usd'].mean().reset_index()
     avg_budget_year_fig = px.line(avg_budget_per_year, x='year', y='budget_usd', labels={'year': 'Jaar', 'budget_usd': 'Gemiddeld Budget in USD'}, title="Gemiddeld Budget per Jaar")
     
-    table_data = filtered_df[['title', 'year', 'director', 'actors', 'budget_usd', 'avg_vote']].to_dict('records')
 
-    return genre_fig, language_fig, avg_budget_year_fig, table_data
+    return genre_fig, language_fig, avg_budget_year_fig
 
 if __name__ == '__main__':
     app.run(debug=True)
