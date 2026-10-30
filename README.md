@@ -118,7 +118,7 @@ python "src/onboarding assigment/machine_learning_rating.py"
 ```
 
 - `connection.py` puts the cleaned movies in table `movies` and prints the results of some queries.
-- `machine_learning_success.py` writes the features to table `movie_prediction_features`, trains the three models and shows their charts. After you close the chart window it overwrites `lr_model.pkl`, `rf_model.pkl`, `sgd_model.pkl` and `target_mapping.json`. Each of these scripts runs for about a minute.
+- `machine_learning_success.py` writes the features to table `movie_prediction_features`, trains the three models and shows their charts. After you close the chart window it overwrites `lr_model.pkl`, `rf_model.pkl`, `sgd_model.pkl` and `target_mapping.json`. Each of these scripts runs for one to two minutes.
 - `machine_learning_rating.py` trains the same three models on the rating and shows their charts.
 
 Remove the container and its data when you are done:
