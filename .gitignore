@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Local settings with database passwords
+.env
+
+# Flask-Caching files, made by the dashboard
+cache/
+
+# IDE
+.idea/

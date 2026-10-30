@@ -1,93 +1,132 @@
-# onboarding assignment
+# Movie Success Prediction: IMDb dashboard with a success score
 
+An analysis of about 81,000 IMDb movies with an interactive Dash dashboard. The dashboard also predicts a success score for a new movie with a machine learning model. Gurpreet Singh made it as the onboarding assignment and workshop exercises of an HvA (Amsterdam University of Applied Sciences) course in spring 2025.
 
+- Team: Gurpreet Singh
+- Period: January to April 2025
+
+## What it does
+
+- **Overview page:** a table of the 12,358 movies that have a budget, filters (title, genre, years, language, actor, director) and charts of movies per genre, movies per language and the average budget per year.
+- **Detail pages:** `/movie/<imdb id>` shows one movie, for example `/movie/tt0068646`. Click the director or an actor to see all their movies.
+- **Prediction page:** pick a director, genres, a country, a language and a budget. A linear regression model gives a success score between -1 and 1. The score is 70% profit compared to the budget and 30% rating, scaled with `tanh`.
+- **Scripts:** clean the raw IMDb data, train three models (linear regression, random forest, SGD) and save them as `.pkl` files. Some scripts store the data in a MySQL database. You can skip these: the dashboard works without them.
+- **Workshop exercises:** small pandas and matplotlib analyses of football results, crimes and Netflix titles.
+
+## What is where
+
+```text
+data/                           CSV and Parquet data (some files use Git LFS)
+src/onboarding assigment/       the project code (the folder name has a typo and a space)
+  main_v8.py                    the dashboard
+  app.py                        an older, simpler dashboard
+  movies.py                     cleans data/IMDb movies.csv
+  machine_learning_success.py   trains the success models (needs MySQL)
+  machine_learning_rating.py    trains models on the rating (reads .env)
+  database/connection.py        puts the movies in MySQL and runs example queries
+src/workshop 2 exercise/        football exercise
+src/workshop 3 exercise/        crimes and Netflix exercises
+*.json                          saved dropdown lists for the dashboard
+*.pkl, target_mapping.json      models and encoding saved by machine_learning_success.py
+requirements.txt                Python packages
+.env.example                    database settings for the MySQL scripts
+```
+
+## What you need
+
+- Python 3.13 (tested with 3.13.16). The pinned packages do not install on Python 3.14.
+- Git with Git LFS (tested with Git 2.53 and git-lfs 3.8). Git for Windows includes Git LFS.
+- Only for the MySQL scripts: Docker (tested with Docker Engine 29) or your own MySQL 8 server.
 
 ## Getting started
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Run every command from the repository root. The scripts read `data/...` relative to the folder you are in.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+### 1. Clone the repository
 
-## Add your files
+Turn on Git LFS before you clone, or the large data files arrive as small pointer files.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.fdmci.hva.nl/singhg11/onboarding-assignment.git
-git branch -M main
-git push -uf origin main
+```bash
+git lfs install
+git clone https://github.com/guruITA/movie-success-prediction.git
+cd movie-success-prediction
 ```
 
-## Integrate with your tools
+If you cloned without Git LFS, run `git lfs pull` in the repository.
 
-- [ ] [Set up project integrations](https://gitlab.fdmci.hva.nl/singhg11/onboarding-assignment/-/settings/integrations)
+### 2. Make a virtual environment and install the packages
 
-## Collaborate with your team
+```bash
+python3.13 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+On Windows (PowerShell):
 
-## Test and Deploy
+```powershell
+py -3.13 -m venv .venv
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
 
-Use the built-in continuous integration in GitLab.
+### 3. Start the dashboard
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+```bash
+python "src/onboarding assigment/main_v8.py"
+```
 
-***
+The first start takes about half a minute. The app trains its model at startup, and the debug mode loads the file twice. Wait for `Dash is running on http://127.0.0.1:8050/`.
 
-# Editing this README
+### 4. Open it in the browser
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+Go to <http://127.0.0.1:8050>. Click **Prediction** at the top for the prediction page, or go to <http://127.0.0.1:8050/prediction>. Stop the app with `Ctrl+C`.
 
-## Suggestions for a good README
+## Other scripts
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+You can run these after step 2, also from the repository root. The scripts that make charts open a window and wait until you close it.
 
-## Name
-Choose a self-explaining name for your project.
+```bash
+python "src/onboarding assigment/app.py"
+python "src/onboarding assigment/movies.py"
+python "src/workshop 2 exercise/football.py"
+python "src/workshop 3 exercise/crimes.py"
+python "src/workshop 3 exercise/netflix.py"
+```
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+- `app.py` is the older dashboard, also on <http://127.0.0.1:8050>. Stop `main_v8.py` first.
+- `movies.py` writes `data/clean_movies_successfull.csv` again.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+### The MySQL scripts (optional)
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+`database/connection.py`, `machine_learning_success.py` and `machine_learning_rating.py` read database settings from a `.env` file. During the course they used a school database. Use a local MySQL in Docker instead:
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+```bash
+docker run -d --name movie-mysql -e MYSQL_ROOT_PASSWORD=change-me -e MYSQL_DATABASE=movies -p 3306:3306 mysql:8.4
+cp .env.example .env
+```
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+`.env.example` already matches this container. Wait about 20 seconds until MySQL is ready, then run:
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+```bash
+python "src/onboarding assigment/database/connection.py"
+python "src/onboarding assigment/machine_learning_success.py"
+python "src/onboarding assigment/machine_learning_rating.py"
+```
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+- `connection.py` puts the cleaned movies in table `movies` and prints the results of some queries.
+- `machine_learning_success.py` writes the features to table `movie_prediction_features`, trains the three models and shows their charts. After you close the chart window it overwrites `lr_model.pkl`, `rf_model.pkl`, `sgd_model.pkl` and `target_mapping.json`. Each of these scripts runs for about a minute.
+- `machine_learning_rating.py` trains the same three models on the rating and shows their charts.
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+Remove the container and its data when you are done:
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+```bash
+docker rm -f -v movie-mysql
+```
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+## Who did what
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+- **Gurpreet Singh** built everything: the data cleaning (`movies.py`), the MySQL import and queries (`database/connection.py`), the success and rating models (`machine_learning_success.py`, `machine_learning_rating.py`), both Dash dashboards (`app.py`, `main_v8.py`) and the workshop exercises.
