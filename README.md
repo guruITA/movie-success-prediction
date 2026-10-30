@@ -79,7 +79,7 @@ python -m pip install -r requirements.txt
 python "src/onboarding assigment/main_v8.py"
 ```
 
-The first start takes about half a minute. The app trains its model at startup, and the debug mode loads the file twice. Wait for `Dash is running on http://127.0.0.1:8050/`.
+The first start takes half a minute on Linux and up to three minutes on Windows. The app trains its model at startup, and the debug mode loads the file twice. Wait for `Dash is running on http://127.0.0.1:8050/`.
 
 ### 4. Open it in the browser
 
