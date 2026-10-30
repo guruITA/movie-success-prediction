@@ -1,0 +1,19 @@
+# Dashboard (src/onboarding assigment/main_v8.py and app.py)
+dash==3.0.4
+plotly==6.0.1
+pandas==2.2.3
+numpy==2.2.6
+pyarrow==19.0.1
+Flask-Caching==2.3.1
+scikit-learn==1.6.1
+# Newer SciPy builds are blocked by Windows Smart App Control
+scipy==1.15.3
+
+# Analysis and machine learning scripts
+matplotlib==3.10.1
+joblib==1.4.2
+
+# Optional MySQL scripts
+SQLAlchemy==2.0.40
+mysql-connector-python==9.3.0
+python-dotenv==1.1.0
